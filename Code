@@ -1,0 +1,64 @@
+import webbrowser
+import requests
+from bs4 import BeautifulSoup
+
+url = "https://github.com/"
+username =  raw_input("enter the username ")
+#print username
+reponame =  raw_input("If know the name of repo enter ")
+
+r = requests.get(url+username)
+
+data  = r.text
+
+soup = BeautifulSoup(data,"html.parser")
+datas = soup.find_all("span",{"class":"counter"},limit=4)
+languages = soup.find_all("span",{"class":"mr-2"})
+
+length = len(datas)
+
+
+
+if reponame !="":
+   url = "https://github.com/"+username+"/"+reponame
+   #r = requests.get('http://github.com')
+   if r.status_code==200: 
+   #print "PAGE DOESN'T EXIST"
+     print("status code =%s"%(r.status_code))
+     print("REPOSITORIES :%s"%(datas[0].text))
+     print("STARS :%s"%(datas[1].text))
+     print("FOLLOWERS :%s"%(datas[2].text))
+     print("FOLLOWING :%s"%(datas[3].text))
+     permission = raw_input("WANT TO OPEN PAGE? Y/N ")
+     if permission=="Y":
+        webbrowser.open(url) 
+   else:
+     print("PAGE DOESN'T EXIST")   
+#print r.status_code
+#url = "http://docs.python.org/library/webbrowser.html"
+
+else:
+   url = "https://github.com/"+username
+   r = requests.get(url)
+
+#ONLY OPEN PAGE IF PAGE  EXIST    
+   if r.status_code!=200: 
+      print "PAGE DOESN'T EXIST"
+   else:
+       if length<4:
+            
+           print("REPOSITORIES :%s"%(datas[0].text)) 
+           print("TOP LANGUAGES USED BY THE ORGANIZATION ")
+           for lan in languages:
+            print(lan.text)     
+       else:
+          print("status code =%s"%(r.status_code))
+          print("REPOSITORIES :%s"%(datas[0].text))
+          print("STARS :%s"%(datas[1].text))
+          print("FOLLOWERS :%s"%(datas[2].text))
+          print("FOLLOWING :%s"%(datas[3].text))      
+        
+       permission = raw_input("WANT TO OPEN PAGE ALSO? Y/N ")
+       if permission=="Y": 
+          webbrowser.open(url) 
+
